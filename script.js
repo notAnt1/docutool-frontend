@@ -5,7 +5,7 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
   // Add the target conversion format (example: to DOCX)
   formData.append("to_format", "docx");
 
-  const response = await fetch("https://docutool-backend.onrender.com/convert", {
+  const response = await fetch("https://docutool-backend-1.onrender.com/convert", {
     method: "POST",
     body: formData,
   });
