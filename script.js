@@ -2,10 +2,18 @@ document.getElementById("upload-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
 
-  const response = await fetch("https://docutool-backend.onrender.com/pdf-to-word", {
+  // Add the target conversion format (example: to DOCX)
+  formData.append("to_format", "docx");
+
+  const response = await fetch("https://docutool-backend.onrender.com/convert", {
     method: "POST",
-    body: formData
+    body: formData,
   });
+
+  if (!response.ok) {
+    alert("Conversion failed");
+    return;
+  }
 
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
