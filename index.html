@@ -1,16 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>DocuTool - Free PDF to Word Converter</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>DocuTool File Converter</title>
 </head>
 <body>
-  <h1>Convert PDF to Word</h1>
-  <form id="upload-form" enctype="multipart/form-data">
-    <input type="file" name="pdf" accept=".pdf" required />
+  <h1>DocuTool File Converter</h1>
+  <form id="upload-form">
+    <input type="file" id="file" name="file" required />
+    <select id="conversion-options" name="to_format" required>
+      <option value="">-- Select a conversion type --</option>
+    </select>
     <button type="submit">Convert</button>
   </form>
-  <div id="result"></div>
-  <script src="script.js"></script>
+
+  <script>
+    const conversionMap = {
+      pdf: ["docx"],
+      docx: ["pdf", "txt"],
+      txt: ["pdf"],
+      jpg: ["pdf"],
+      jpeg: ["pdf"],
+      png: ["pdf"]
+    };
+
+    const fileInput = document.getElementById("file");
+    const options = document.getElementById("conversion-options");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const ext = file.name.split(".").pop().toLowerCase();
+      const validTargets = conversionMap[ext] || [];
+
+      // Clear and repopulate options
+      options.innerHTML = '<option value="">-- Select a conversion type --</option>';
+      validTargets.forEach(format => {
+        const opt = document.createElement("option");
+        opt.value = format;
+        opt.textContent = `Convert to .${format}`;
+        options.appendChild(opt);
+      });
+    });
+
+    document.getElementById("upload-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+      const response = await fetch("https://docutool-backend.onrender.com/convert", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        alert("Conversion failed.");
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "converted." + formData.get("to_format");
+      a.click();
+    });
+  </script>
 </body>
 </html>
+
