@@ -6,8 +6,8 @@
 </head>
 <body>
   <h1>DocuTool File Converter</h1>
-  <form id="upload-form">
-    <input type="file" id="file" name="file" required />
+  <form id="upload-form" enctype="multipart/form-data">
+    <input type="file" id="file" name="file" required accept=".pdf,.docx,.txt,.jpg,.jpeg,.png" />
     <select id="conversion-options" name="to_format" required>
       <option value="">-- Select a conversion type --</option>
     </select>
@@ -34,7 +34,6 @@
       const ext = file.name.split(".").pop().toLowerCase();
       const validTargets = conversionMap[ext] || [];
 
-      // Clear and repopulate options
       options.innerHTML = '<option value="">-- Select a conversion type --</option>';
       validTargets.forEach(format => {
         const opt = document.createElement("option");
@@ -68,4 +67,3 @@
   </script>
 </body>
 </html>
-
